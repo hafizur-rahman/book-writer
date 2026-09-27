@@ -6,3 +6,4 @@ ollama
 langchain-ollama
 langchain-openai
 langgraph-checkpoint-sqlite
+gradio
