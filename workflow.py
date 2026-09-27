@@ -65,7 +65,7 @@ def _build(state: dict) -> str:
     )
 
 
-def build_workflow(cpu_model, gpu_model):
+def build_workflow(cpu_model, gpu_model, checkpointer):
     """Compile the agentic authoring graph bound to a local LLM."""
 
     def _research(state: dict) -> dict:
@@ -127,8 +127,8 @@ def build_workflow(cpu_model, gpu_model):
         return {"review": resp, "decision": decision}
 
     def _edit(state: dict) -> dict:
-        sys = SystemMessage(EDIT_SYS)
-        prompt = f"{EDIT_SYS}\n\nDraft:\n{state['draft']}\n\nFeedback:\n{state['review']}"
+        sys = SystemMessage(DRAFT_SYS + "\n" + EDIT_SYS)
+        prompt = f"{DRAFT_SYS}\n{EDIT_SYS}\n\nDraft:\n{state['draft']}\n\nFeedback:\n{state['review']}"
         
         print(sys)
         print(prompt)
@@ -159,7 +159,7 @@ def build_workflow(cpu_model, gpu_model):
     g.add_conditional_edges(
         "review", lambda s: s["decision"],
         {"improve": "edit", "pass": "finalize"})
-    g.add_edge("edit", "draft")
+    g.add_edge("edit", "review")
     g.add_edge("finalize", END)
 
-    return g.compile()
+    return g.compile(checkpointer=checkpointer)

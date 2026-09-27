@@ -5,6 +5,7 @@ from generator import BookGenerator
 
 def main():
     p = argparse.ArgumentParser(description="Generate a DL/LLM book with a LangGraph author.")
+    p.add_argument("--thread-id", required=True, help="Thread id for interruption/resumption")
     p.add_argument("--cpu-model", default="ornith-1.5:35b", help="Ollama model (CPU).")
     p.add_argument("--prefer", choices=["gpu", "cpu", "auto"], default="gpu",
                    help="Where to do the heavy drafting.")
@@ -20,7 +21,7 @@ def main():
     
     print(f"Authoring with: (backend={args.prefer})")
 
-    gen = BookGenerator(CHAPTERS, cpu_model, gpu_model)
+    gen = BookGenerator(args.thread_id, CHAPTERS, cpu_model, gpu_model)
     t0 = time.time()
     gen.run(resume=args.resume, only=args.chapter, regenerate=[args.regenerate] if args.regenerate else None)
     print(f"Elapsed: {time.time()-t0:.1f}s")

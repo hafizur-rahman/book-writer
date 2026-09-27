@@ -5,3 +5,4 @@ pydantic>=2
 ollama
 langchain-ollama
 langchain-openai
+langgraph-checkpoint-sqlite

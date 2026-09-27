@@ -5,10 +5,13 @@ from pathlib import Path
 from chapters import CHAPTERS
 from workflow import build_workflow
 
+from langgraph.checkpoint.sqlite import SqliteSaver
+
 PROGRESS = Path(".book_progress")
 
 class BookGenerator:
-    def __init__(self, chapters, cpu_model, gpu_model, progress_dir: str = str(PROGRESS)):
+    def __init__(self, thread_id, chapters, cpu_model, gpu_model, progress_dir: str = str(PROGRESS)):
+        self.thread_id = thread_id
         self.chapters = chapters
         self.cpu_model = cpu_model
         self.gpu_model = gpu_model
@@ -27,17 +30,24 @@ class BookGenerator:
 
     # ---- single chapter ----------------------------------------
     def run_chapter(self, chapter) -> str:
-        graph = build_workflow(self.cpu_model, self.gpu_model)
-        initial = {
-            "chapter": chapter, "research": "", "outline": "",
-            "draft": "", "review": "", "final": "",
-            "iterations": 0, "decision": "pass", "messages": [],
-        }
-        result = graph.invoke(initial)
-        chapter_md = result["final"]
-        (self.progress_dir / f"chapter_{chapter.num}.md").write_text(chapter_md)
-        self.manifest[str(chapter.num)] = {"status": "done"}
-        self._save_manifest()
+        # The database file is created if it doesn't exist
+        with SqliteSaver.from_conn_string("checkpoints.db") as sqlite_saver:
+            graph = build_workflow(self.cpu_model, self.gpu_model, sqlite_saver)
+            initial = {
+                "chapter": chapter, "research": "", "outline": "",
+                "draft": "", "review": "", "final": "",
+                "iterations": 0, "decision": "pass", "messages": [],
+            }
+    
+            config = {"configurable": {"thread_id": self.thread_id}}
+
+            result = graph.invoke(initial, config)
+            chapter_md = result["final"]
+            (self.progress_dir / f"chapter_{chapter.num}.md").write_text(chapter_md)
+
+            self.manifest[str(chapter.num)] = {"status": "done"}
+            self._save_manifest()
+            
         return chapter_md
 
     # ---- full loop ---------------------------------------------
