@@ -296,36 +296,36 @@ def make_app():
         # --- Research tab ---
         with gr.Tab("Research"):
             research_status = gr.Textbox(label="Status", interactive=False)
-            research_output = gr.Markdown(label="Research Output", interactive=False)
+            research_output = gr.Textbox(label="Research Output", interactive=False)
             research_thinking = gr.HTML(label="Thinking Stream")
 
         # --- Outline tab ---
         with gr.Tab("Outline"):
             outline_status = gr.Textbox(label="Status", interactive=False)
-            outline_output = gr.Markdown(label="Outline Output", interactive=False)
+            outline_output = gr.Textbox(label="Outline Output", interactive=False)
             outline_thinking = gr.HTML(label="Thinking Stream")
 
         # --- Draft tab ---
         with gr.Tab("Draft"):
             draft_status = gr.Textbox(label="Status", interactive=False)
-            draft_output = gr.Markdown(label="Draft Output", interactive=False)
+            draft_output = gr.Textbox(label="Draft Output", interactive=False)
             draft_thinking = gr.HTML(label="Thinking Stream")
 
         # --- Review tab ---
         with gr.Tab("Review"):
             review_status = gr.Textbox(label="Status", interactive=False)
-            review_output = gr.Markdown(label="Review JSON", interactive=False)
+            review_output = gr.Textbox(label="Review JSON", interactive=False)
             review_thinking = gr.HTML(label="Thinking Stream")
 
         # --- Edit tab ---
         with gr.Tab("Edit"):
             edit_status = gr.Textbox(label="Status", interactive=False)
-            edit_output = gr.Markdown(label="Edited Draft", interactive=False)
+            edit_output = gr.Textbox(label="Edited Draft", interactive=False)
             edit_thinking = gr.HTML(label="Thinking Stream")
 
         # --- Final tab ---
         with gr.Tab("Final"):
-            final_output = gr.Markdown(label="Cleaned Final Chapter", interactive=False)
+            final_output = gr.Textbox(label="Cleaned Final Chapter", interactive=False)
 
         # --- Diff tab ---
         with gr.Tab("Diff Viewer"):
@@ -333,7 +333,7 @@ def make_app():
 
         # --- Full chapter tab ---
         with gr.Tab("Full Chapter"):
-            full_chapter = gr.Markdown(label="Complete Chapter", interactive=False)
+            full_chapter = gr.Markdown(label="Complete Chapter")
 
         # --- Progress tab ---
         with gr.Tab("Progress"):
