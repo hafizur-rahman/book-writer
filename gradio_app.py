@@ -175,9 +175,10 @@ class HybridStreamingRunner:
 
             draft_text += piece
             state["draft"] = draft_text
+            original_draft = draft_text
+
             yield "[draft]", piece, progress, original_draft, edited_draft, thinking_html, cleaned_final
 
-        original_draft = draft_text
 
         # ---------------- REVIEW + EDIT LOOP ----------------
         phase_index += 1
