@@ -71,14 +71,28 @@ def build_workflow(cpu_model, gpu_model):
     def _research(state: dict) -> dict:
         sys = SystemMessage(RESEARCH_SYS)
         user = HumanMessage(f"Chapter:\n{_build(state)}\n\nResearch notes:")
-        resp = gpu_model.invoke(f"{RESEARCH_SYS}\n\n{_build(state)}")
+
+        print(sys)
+        print(user)
+
+        resp = gpu_model.invoke(f"{RESEARCH_SYS}\n\n{_build(state)}").content
+
+        print(resp)
+
         return {"research": resp,
                 "messages": [sys, user, AIMessage(resp)]}
 
     def _outline(state: dict) -> dict:
         sys = SystemMessage(OUTLINE_SYS)
         prompt = f"{OUTLINE_SYS}\n\n{_build(state)}\n\nResearch notes:\n{state['research']}"
-        resp = gpu_model.invoke(prompt)
+        
+        print(sys)
+        print(prompt)
+
+        resp = gpu_model.invoke(prompt).content
+        
+        print(resp)
+        
         return {"outline": resp, "messages": [sys, AIMessage(resp)]}
 
     def _draft(state: dict) -> dict:
@@ -88,12 +102,23 @@ def build_workflow(cpu_model, gpu_model):
             f"Notes:\n{state['research']}\n\n"
             f"Write the full chapter now."
         )
-        resp = cpu_model.invoke(prompt)
+
+        print(sys)
+        print(prompt)
+
+        resp = cpu_model.invoke(prompt).content
+        
+        print(resp)
+        
         return {"draft": resp, "messages": [sys, AIMessage(resp)]}
 
     def _review(state: dict) -> dict:
         prompt = f"{REVIEW_SYS}\n\nDRAFT:\n{state['draft']}"
-        resp = gpu_model.invoke(prompt)
+        print(prompt)
+
+        resp = gpu_model.invoke(prompt).content        
+        print(resp)
+
         try:
             data = json.loads(resp.split("```")[0].strip().lstrip("```json"))
         except Exception:
@@ -104,7 +129,13 @@ def build_workflow(cpu_model, gpu_model):
     def _edit(state: dict) -> dict:
         sys = SystemMessage(EDIT_SYS)
         prompt = f"{EDIT_SYS}\n\nDraft:\n{state['draft']}\n\nFeedback:\n{state['review']}"
-        resp = cpu_model.invoke(prompt)
+        
+        print(sys)
+        print(prompt)
+        
+        resp = cpu_model.invoke(prompt).content
+        print(resp)
+        
         return {"draft": resp,
                 "iterations": state.get("iterations", 0) + 1,
                 "messages": [sys, AIMessage(resp)]}
