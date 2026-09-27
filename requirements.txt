@@ -1,0 +1,7 @@
+langchain>=0.3
+langchain-community>=0.3
+langgraph>=0.2
+pydantic>=2
+ollama
+langchain-ollama
+langchain-openai
